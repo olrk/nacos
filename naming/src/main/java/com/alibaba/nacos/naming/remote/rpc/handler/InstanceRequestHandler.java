@@ -48,6 +48,7 @@ public class InstanceRequestHandler extends RequestHandler<InstanceRequest, Inst
     
     @Override
     @Secured(action = ActionTypes.WRITE)
+    // lrk:?疑似接受client grpc请求的代码
     public InstanceResponse handle(InstanceRequest request, RequestMeta meta) throws NacosException {
         Service service = Service
                 .newService(request.getNamespace(), request.getGroupName(), request.getServiceName(), true);

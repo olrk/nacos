@@ -176,9 +176,11 @@ public class ServiceInfoUpdateService implements Closeable {
         
         @Override
         public void run() {
+            // lrk:延迟1s
             long delayTime = DEFAULT_DELAY;
             
             try {
+                // lrk:判断服务是否已停止订阅
                 if (!changeNotifier.isSubscribed(groupName, serviceName, clusters) && !futureMap.containsKey(
                         serviceKey)) {
                     NAMING_LOGGER.info("update task is stopped, service:{}, clusters:{}", groupedServiceName, clusters);
@@ -187,23 +189,27 @@ public class ServiceInfoUpdateService implements Closeable {
                 }
                 
                 ServiceInfo serviceObj = serviceInfoHolder.getServiceInfoMap().get(serviceKey);
+                // lrk:本地缓存不存在，则直接查询最新的服务
                 if (serviceObj == null) {
                     serviceObj = namingClientProxy.queryInstancesOfService(serviceName, groupName, clusters, 0, false);
                     serviceInfoHolder.processServiceInfo(serviceObj);
                     lastRefTime = serviceObj.getLastRefTime();
                     return;
                 }
-                
+
+                // lrk:超过缓存更新时间，则去更新服务
                 if (serviceObj.getLastRefTime() <= lastRefTime) {
                     serviceObj = namingClientProxy.queryInstancesOfService(serviceName, groupName, clusters, 0, false);
                     serviceInfoHolder.processServiceInfo(serviceObj);
                 }
                 lastRefTime = serviceObj.getLastRefTime();
+                // lrk:服务没有实例则记为失败
                 if (CollectionUtils.isEmpty(serviceObj.getHosts())) {
                     incFailCount();
                     return;
                 }
                 // TODO multiple time can be configured.
+                // lrk:设置下次更新缓存的时间
                 delayTime = serviceObj.getCacheMillis() * DEFAULT_UPDATE_CACHE_TIME_MULTIPLE;
                 resetFailCount();
             } catch (NacosException e) {

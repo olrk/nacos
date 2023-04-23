@@ -84,11 +84,13 @@ public class NacosNamingService implements NamingService {
     public NacosNamingService(Properties properties) throws NacosException {
         init(properties);
     }
-    
+
+    // lrk:初始化NacosNamingService
     private void init(Properties properties) throws NacosException {
         final NacosClientProperties nacosClientProperties = NacosClientProperties.PROTOTYPE.derive(properties);
         
         ValidatorUtils.checkInitParam(nacosClientProperties);
+        // lrk:初始化namespace
         this.namespace = InitUtils.initNamespaceForNaming(nacosClientProperties);
         InitUtils.initSerialization();
         InitUtils.initWebRootContext(nacosClientProperties);
@@ -97,6 +99,7 @@ public class NacosNamingService implements NamingService {
         this.notifierEventScope = UUID.randomUUID().toString();
         this.changeNotifier = new InstancesChangeNotifier(this.notifierEventScope);
         NotifyCenter.registerToPublisher(InstancesChangeEvent.class, 16384);
+        // lrk:注册InstancesChangeNotifier（实例变更通知者）到事件通知中心
         NotifyCenter.registerSubscriber(changeNotifier);
         this.serviceInfoHolder = new ServiceInfoHolder(namespace, this.notifierEventScope, nacosClientProperties);
         this.clientProxy = new NamingClientProxyDelegate(this.namespace, serviceInfoHolder, nacosClientProperties, changeNotifier);
@@ -122,11 +125,13 @@ public class NacosNamingService implements NamingService {
     }
     
     @Override
+    // lrk:最终会调用该方法注册实例
     public void registerInstance(String serviceName, String groupName, String ip, int port, String clusterName)
             throws NacosException {
         Instance instance = new Instance();
         instance.setIp(ip);
         instance.setPort(port);
+        // lrk:服务实例调用权重
         instance.setWeight(1.0);
         instance.setClusterName(clusterName);
         registerInstance(serviceName, groupName, instance);
@@ -139,6 +144,7 @@ public class NacosNamingService implements NamingService {
     
     @Override
     public void registerInstance(String serviceName, String groupName, Instance instance) throws NacosException {
+        // lrk:instance成员变量校验
         NamingUtils.checkInstanceIsLegal(instance);
         clientProxy.registerService(serviceName, groupName, instance);
     }
@@ -238,6 +244,7 @@ public class NacosNamingService implements NamingService {
         if (subscribe) {
             serviceInfo = serviceInfoHolder.getServiceInfo(serviceName, groupName, clusterString);
             if (null == serviceInfo || !clientProxy.isSubscribed(serviceName, groupName, clusterString)) {
+                // lrk:订阅模式
                 serviceInfo = clientProxy.subscribe(serviceName, groupName, clusterString);
             }
         } else {

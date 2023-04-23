@@ -105,6 +105,7 @@ public class ClientManagerDelegate implements ClientManager {
     
     private ClientManager getClientManagerById(String clientId) {
         if (isConnectionBasedClient(clientId)) {
+            // lrk:ConnectionBasedClientManager负责管理长连接与Client的映射关系
             return connectionBasedClientManager;
         }
         return clientId.endsWith(ClientConstants.PERSISTENT_SUFFIX) ? persistentIpPortClientManager : ephemeralIpPortClientManager;

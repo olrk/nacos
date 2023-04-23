@@ -42,6 +42,7 @@ import static com.alibaba.nacos.api.exception.NacosException.SERVER_ERROR;
  * @author <a href="mailto:liaochuntao@live.com">liaochuntao</a>
  * @author zongtanghu
  */
+// lrk:事件通知中心，很重要的一个组件
 public class NotifyCenter {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NotifyCenter.class);
@@ -63,6 +64,7 @@ public class NotifyCenter {
     /**
      * Publisher management container.
      */
+    // lrk:事件通知者从外部注册添加进来，比如NacosNamingService调用registerToPublisher()方法
     private final Map<String, EventPublisher> publisherMap = new ConcurrentHashMap<>(16);
     
     static {
@@ -83,7 +85,8 @@ public class NotifyCenter {
         } else {
             clazz = DefaultPublisher.class;
         }
-        
+
+        // lrk:初始化默认发布者工厂
         DEFAULT_PUBLISHER_FACTORY = (cls, buffer) -> {
             try {
                 EventPublisher publisher = clazz.newInstance();
@@ -291,6 +294,7 @@ public class NotifyCenter {
      * @param event     event instance.
      */
     private static boolean publishEvent(final Class<? extends Event> eventType, final Event event) {
+        // lrk:核心事件发布流程
         if (ClassUtils.isAssignableFrom(SlowEvent.class, eventType)) {
             return INSTANCE.sharePublisher.publish(event);
         }

@@ -28,12 +28,24 @@ public class PreservedMetadataKeys {
      * The key to indicate the registry source of service instance, such as Dubbo, SpringCloud, etc.
      */
     public static final String REGISTER_SOURCE = "preserved.register.source";
-    
+
+    /**
+     * 实例心跳超时时间，默认15s，超时标记为不健康
+     */
     public static final String HEART_BEAT_TIMEOUT = "preserved.heart.beat.timeout";
-    
+
+    /**
+     * 实例超时删除时间，默认30s
+     */
     public static final String IP_DELETE_TIMEOUT = "preserved.ip.delete.timeout";
-    
+
+    /**
+     * 实例心跳间隙，默认5s
+     */
     public static final String HEART_BEAT_INTERVAL = "preserved.heart.beat.interval";
-    
+
+    /**
+     * 实例ID生成器，默认【simple】
+     */
     public static final String INSTANCE_ID_GENERATOR = "preserved.instance.id.generator";
 }

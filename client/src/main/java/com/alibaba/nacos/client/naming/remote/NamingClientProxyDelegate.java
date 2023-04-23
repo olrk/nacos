@@ -74,6 +74,7 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
         this.securityProxy = new SecurityProxy(this.serverListManager.getServerList(),
                 NamingHttpClientManager.getInstance().getNacosRestTemplate());
         initSecurityProxy(properties);
+        // lrk:实例化两个被代理对象
         this.httpClientProxy = new NamingHttpClientProxy(namespace, securityProxy, serverListManager, properties);
         this.grpcClientProxy = new NamingGrpcClientProxy(namespace, securityProxy, serverListManager, properties,
                 serviceInfoHolder);
@@ -95,6 +96,7 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
     
     @Override
     public void registerService(String serviceName, String groupName, Instance instance) throws NacosException {
+        // lrk:临时实例会使用grpc来注册，否则使用http
         getExecuteClientProxy(instance).registerService(serviceName, groupName, instance);
     }
     
@@ -167,11 +169,14 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
         NAMING_LOGGER.info("[SUBSCRIBE-SERVICE] service:{}, group:{}, clusters:{} ", serviceName, groupName, clusters);
         String serviceNameWithGroup = NamingUtils.getGroupedName(serviceName, groupName);
         String serviceKey = ServiceInfo.getKey(serviceNameWithGroup, clusters);
+        // lrk:定时同步服务端的实例信息，并进行本地缓存更新等操作
         serviceInfoUpdateService.scheduleUpdateIfAbsent(serviceName, groupName, clusters);
         ServiceInfo result = serviceInfoHolder.getServiceInfoMap().get(serviceKey);
         if (null == result || !isSubscribed(serviceName, groupName, clusters)) {
+            // lrk:如果本地缓存不存在，则使用grpc进行订阅
             result = grpcClientProxy.subscribe(serviceName, groupName, clusters);
         }
+        // lrk:本地缓存处理，上面的定时任务也执行了该方法
         serviceInfoHolder.processServiceInfo(result);
         return result;
     }

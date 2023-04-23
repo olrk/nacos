@@ -61,10 +61,13 @@ public class DefaultPublisher extends Thread implements EventPublisher {
     
     @Override
     public void init(Class<? extends Event> type, int bufferSize) {
+        // lrk:守护线程
         setDaemon(true);
+        // lrk:线程名
         setName("nacos.publisher-" + type.getName());
         this.eventType = type;
         this.queueMaxSize = bufferSize;
+        // lrk:初始化阻塞队列
         this.queue = new ArrayBlockingQueue<>(bufferSize);
         start();
     }
@@ -91,6 +94,7 @@ public class DefaultPublisher extends Thread implements EventPublisher {
     }
     
     @Override
+    // lrk:DefaultPublisher重写run()方法
     public void run() {
         openEventHandler();
     }
@@ -102,11 +106,14 @@ public class DefaultPublisher extends Thread implements EventPublisher {
             int waitTimes = 60;
             // To ensure that messages are not lost, enable EventHandler when
             // waiting for the first Subscriber to register
+            // lrk:第一个死循环，起到延迟的效果，最长延迟60s
+            // lrk:每一秒判断一次当前线程是否已经关闭、是否有订阅者、是否已经达到最长延迟时间，满足条件之一就跳出死循环
             while (!shutdown && !hasSubscriber() && waitTimes > 0) {
                 ThreadUtils.sleep(1000L);
                 waitTimes--;
             }
 
+            // lrk:第二个死循环，处理业务。也就是从队列取出事件，处理事件
             while (!shutdown) {
                 final Event event = queue.take();
                 receiveEvent(event);
@@ -135,6 +142,7 @@ public class DefaultPublisher extends Thread implements EventPublisher {
     public boolean publish(Event event) {
         checkIsStart();
         boolean success = this.queue.offer(event);
+        // lrk:添加进阻塞队列失败时会直接处理该事件
         if (!success) {
             LOGGER.warn("Unable to plug in due to interruption, synchronize sending time, event : {}", event);
             receiveEvent(event);

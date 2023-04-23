@@ -160,6 +160,7 @@ public class ServiceInfoHolder implements Closeable {
             return oldService;
         }
         serviceInfoMap.put(serviceInfo.getKey(), serviceInfo);
+        // lrk:判断服务实例是否有变更
         boolean changed = isChangedServiceInfo(oldService, serviceInfo);
         if (StringUtils.isBlank(serviceInfo.getJsonFromServer())) {
             serviceInfo.setJsonFromServer(JacksonUtils.toJson(serviceInfo));
@@ -168,8 +169,10 @@ public class ServiceInfoHolder implements Closeable {
         if (changed) {
             NAMING_LOGGER.info("current ips:({}) service: {} -> {}", serviceInfo.ipCount(), serviceInfo.getKey(),
                     JacksonUtils.toJson(serviceInfo.getHosts()));
+            // lrk:实例有变更则发布InstancesChangeEvent事件
             NotifyCenter.publishEvent(new InstancesChangeEvent(notifierEventScope, serviceInfo.getName(), serviceInfo.getGroupName(),
                     serviceInfo.getClusters(), serviceInfo.getHosts()));
+            // 将ServiceInfo写入本地文件缓存
             DiskCache.write(serviceInfo, cacheDir);
         }
         return serviceInfo;
