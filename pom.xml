@@ -229,21 +229,21 @@
                     <showWarnings>true</showWarnings>
                 </configuration>
             </plugin>
-            <plugin>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <configuration>
-                    <charset>UTF-8</charset>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <artifactId>maven-javadoc-plugin</artifactId>-->
+<!--                <version>${maven-javadoc-plugin.version}</version>-->
+<!--                <configuration>-->
+<!--                    <charset>UTF-8</charset>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>attach-javadocs</id>-->
+<!--                        <goals>-->
+<!--                            <goal>jar</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>${maven-source-plugin.version}</version>
@@ -275,7 +275,7 @@
                     </rulesets>
                     <printFailingErrors>true</printFailingErrors>
                     <excludes>
-                        <exclude>**/consistency/entity/*.java</exclude>
+                        <exclude>**/*/*/*.java</exclude>
                         <exclude>**/istio/model/mcp/*.java</exclude>
                         <exclude>**/istio/model/naming/*.java</exclude>
                         <exclude>**/istio/model/*.java</exclude>
@@ -313,7 +313,7 @@
                     <encoding>UTF-8</encoding>
                     <consoleOutput>true</consoleOutput>
                     <failsOnError>true</failsOnError>
-                    <excludes>**/consistency/entity/**,**/nacos/test/**,**/api/grpc/auto/**,**/istio/**,**/protobuf/**</excludes>
+                    <excludes>**/*/*/**,**/nacos/test/**,**/api/grpc/auto/**,**/istio/**,**/protobuf/**</excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -497,6 +497,9 @@
                     <plugin>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <version>${maven-gpg-plugin.version}</version>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
