@@ -47,12 +47,13 @@ public class InstanceRequestHandler extends RequestHandler<InstanceRequest, Inst
     }
     
     @Override
+    // lrk:@Secured注解应该跟Distro有关
     @Secured(action = ActionTypes.WRITE)
-    // lrk:?疑似接受client grpc请求的代码
     public InstanceResponse handle(InstanceRequest request, RequestMeta meta) throws NacosException {
         Service service = Service
                 .newService(request.getNamespace(), request.getGroupName(), request.getServiceName(), true);
         switch (request.getType()) {
+            // lrk:nacos节点开始处理客户端的实例注册grpc请求
             case NamingRemoteConstants.REGISTER_INSTANCE:
                 return registerInstance(service, request, meta);
             case NamingRemoteConstants.DE_REGISTER_INSTANCE:
@@ -65,7 +66,9 @@ public class InstanceRequestHandler extends RequestHandler<InstanceRequest, Inst
     
     private InstanceResponse registerInstance(Service service, InstanceRequest request, RequestMeta meta)
             throws NacosException {
+        // lrk:connectionId传入后作为clientId使用
         clientOperationService.registerInstance(service, request.getInstance(), meta.getConnectionId());
+        // lrk:?RegisterInstanceTraceEvent事件好像没有监听方
         NotifyCenter.publishEvent(new RegisterInstanceTraceEvent(System.currentTimeMillis(),
                 meta.getClientIp(), true, service.getNamespace(), service.getGroup(), service.getName(),
                 request.getInstance().getIp(), request.getInstance().getPort()));

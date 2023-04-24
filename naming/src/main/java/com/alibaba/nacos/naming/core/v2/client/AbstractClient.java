@@ -42,7 +42,8 @@ import static com.alibaba.nacos.naming.constants.ClientConstants.REVISION;
  * @author xiweng.yy
  */
 public abstract class AbstractClient implements Client {
-    
+
+    // lrk:Service -> 发布实例，可理解为该客户端的服务实例注册表
     protected final ConcurrentHashMap<Service, InstancePublishInfo> publishers = new ConcurrentHashMap<>(16, 0.75f, 1);
     
     protected final ConcurrentHashMap<Service, Subscriber> subscribers = new ConcurrentHashMap<>(16, 0.75f, 1);
@@ -70,7 +71,7 @@ public abstract class AbstractClient implements Client {
     
     @Override
     public boolean addServiceInstance(Service service, InstancePublishInfo instancePublishInfo) {
-        // lrk:publishers存储当前客户端的服务注册表，对于同一个客户端来说，同一个服务只能注册一个实例
+        // lrk:对同一个客户端来说，同一个服务只能注册一个实例
         if (null == publishers.put(service, instancePublishInfo)) {
             if (instancePublishInfo instanceof BatchInstancePublishInfo) {
                 MetricsMonitor.incrementIpCountWithBatchRegister(instancePublishInfo);
@@ -78,6 +79,7 @@ public abstract class AbstractClient implements Client {
                 MetricsMonitor.incrementInstanceCount();
             }
         }
+        // lrk:发布一个ClientChangedEvent客户端变更事件，由DistroClientDataProcessor负责监听
         NotifyCenter.publishEvent(new ClientEvent.ClientChangedEvent(this));
         Loggers.SRV_LOG.info("Client change for service {}, {}", service, getClientId());
         return true;

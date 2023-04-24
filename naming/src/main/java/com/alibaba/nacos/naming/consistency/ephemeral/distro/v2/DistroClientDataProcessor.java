@@ -122,7 +122,7 @@ public class DistroClientDataProcessor extends SmartSubscriber implements Distro
             distroProtocol.sync(distroKey, DataOperation.DELETE);
         } else if (event instanceof ClientEvent.ClientChangedEvent) {
             DistroKey distroKey = new DistroKey(client.getClientId(), TYPE);
-            distroProtocol.sync(distroKey, DataOperation.CHANGE);
+            distroProtocol.sync(distroKey, DataOperation.CHANGE); // lrk:当前集群节点作为客户端，向其他节点发送Distro数据
         }
     }
     

@@ -44,6 +44,7 @@ public interface ClientManager {
      * @param client new client
      * @return true if add successfully, otherwise false
      */
+    // lrk:?要理一下什么时候调用的
     boolean clientConnected(Client client);
     
     /**

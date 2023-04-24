@@ -159,6 +159,7 @@ public class GrpcRequestAcceptor extends RequestGrpc.RequestImplBase {
             Connection connection = connectionManager.getConnection(GrpcServerConstants.CONTEXT_KEY_CONN_ID.get());
             RequestMeta requestMeta = new RequestMeta();
             requestMeta.setClientIp(connection.getMetaInfo().getClientIp());
+            // lrk:设置connectionId
             requestMeta.setConnectionId(GrpcServerConstants.CONTEXT_KEY_CONN_ID.get());
             requestMeta.setClientVersion(connection.getMetaInfo().getVersion());
             requestMeta.setLabels(connection.getMetaInfo().getLabels());

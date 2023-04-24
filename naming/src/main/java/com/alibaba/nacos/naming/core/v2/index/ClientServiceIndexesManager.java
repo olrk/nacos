@@ -45,10 +45,11 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Component
 public class ClientServiceIndexesManager extends SmartSubscriber {
-    
+
+    // lrk:Service -> 发布者客户端clientId集合
     private final ConcurrentMap<Service, Set<String>> publisherIndexes = new ConcurrentHashMap<>();
     
-    private final ConcurrentMap<Service, Set<String>> subscriberIndexes = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Service, Set<String>> subscriberIndexes = new ConcurrentHashMap<>(); // service -> 订阅者
     
     public ClientServiceIndexesManager() {
         NotifyCenter.registerSubscriber(this, NamingEventPublisherFactory.getInstance());
@@ -78,7 +79,7 @@ public class ClientServiceIndexesManager extends SmartSubscriber {
     }
     
     @Override
-    public List<Class<? extends Event>> subscribeTypes() {
+    public List<Class<? extends Event>> subscribeTypes() { // lrk:监听的事件类型
         List<Class<? extends Event>> result = new LinkedList<>();
         result.add(ClientOperationEvent.ClientRegisterServiceEvent.class);
         result.add(ClientOperationEvent.ClientDeregisterServiceEvent.class);
@@ -129,9 +130,11 @@ public class ClientServiceIndexesManager extends SmartSubscriber {
     }
     
     private void addPublisherIndexes(Service service, String clientId) {
+        // lrk:维护Service与实例客户端集合的映射
         publisherIndexes.computeIfAbsent(service, key -> new ConcurrentHashSet<>());
         publisherIndexes.get(service).add(clientId);
         // lrk:服务注册表变更事件，ServiceChangedEvent由NamingSubscriberServiceV2Impl监听
+        // lrk:主要做两件事，1：通知订阅客户端，2：Nacos集群数据同步
         NotifyCenter.publishEvent(new ServiceEvent.ServiceChangedEvent(service, true));
     }
     

@@ -31,12 +31,15 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author xiweng.yy
  */
+// lrk:ServiceManager是Service的容器，并且Service都是以单例形式存在的
 public class ServiceManager {
     
     private static final ServiceManager INSTANCE = new ServiceManager();
-    
+
+    // lrk:存储Service单例，以namespace、group、name组合来定义一个Service
     private final ConcurrentHashMap<Service, Service> singletonRepository;
-    
+
+    // lrk:存储namespace与Service集合的映射关系
     private final ConcurrentHashMap<String, Set<Service>> namespaceSingletonMaps;
     
     private ServiceManager() {
@@ -60,9 +63,11 @@ public class ServiceManager {
      */
     public Service getSingleton(Service service) {
         singletonRepository.computeIfAbsent(service, key -> {
+            // lrk:?ServiceMetadataEvent由NamingMetadataManager监听，暂不清楚监听后做了什么
             NotifyCenter.publishEvent(new MetadataEvent.ServiceMetadataEvent(service, false));
             return service;
         });
+        // lrk:?这里重新get应该是考虑到并发的场景
         Service result = singletonRepository.get(service);
         namespaceSingletonMaps.computeIfAbsent(result.getNamespace(), namespace -> new ConcurrentHashSet<>());
         namespaceSingletonMaps.get(result.getNamespace()).add(result);

@@ -63,6 +63,7 @@ public class ConnectionBasedClientManager extends ClientConnectionEventListener 
         ClientAttributes attributes = new ClientAttributes();
         attributes.addClientAttribute(ClientConstants.CONNECTION_TYPE, connect.getMetaInfo().getConnectType());
         attributes.addClientAttribute(ClientConstants.CONNECTION_METADATA, connect.getMetaInfo());
+        // lrk:?这里传进来的时候已经有connectionId了，估计是客户端赋值的
         clientConnected(connect.getMetaInfo().getConnectionId(), attributes);
     }
     

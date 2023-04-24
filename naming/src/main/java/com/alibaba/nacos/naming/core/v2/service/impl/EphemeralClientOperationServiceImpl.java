@@ -66,11 +66,14 @@ public class EphemeralClientOperationServiceImpl implements ClientOperationServi
 
         // lrk:此处clientManager为代理对象，即ClientManagerDelegate的实例
         // lrk:这里获得ConnectionBasedClient实例对象
-        Client client = clientManager.getClient(clientId);
+        // lrk:?ClientManager什么时候添加Client
+        Client client = clientManager.getClient(clientId); // lrk:v2版本新增Client模型，每个Client对应一个客户端grpc长连接
         if (!clientIsLegal(client, clientId)) {
             return;
         }
+        // lrk:将instance包装成InstancePublishInfo实例对象，此时有了“发布”的含义
         InstancePublishInfo instanceInfo = getPublishInfo(instance);
+        // lrk:将该InstancePublishInfo实例对象添加进client
         client.addServiceInstance(singleton, instanceInfo);
         client.setLastUpdatedTime();
         client.recalculateRevision();
