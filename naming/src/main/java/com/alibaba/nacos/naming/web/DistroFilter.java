@@ -55,6 +55,7 @@ import static com.alibaba.nacos.common.constant.RequestUrlConstants.HTTP_PREFIX;
  *
  * @author nacos
  */
+// lrk:nacos节点根据Distro协议路由转发
 public class DistroFilter implements Filter {
     
     private static final int PROXY_CONNECT_TIMEOUT = 2000;
@@ -99,7 +100,8 @@ public class DistroFilter implements Filter {
                 return;
             }
             String distroTag = distroTagGenerator.getResponsibleTag(req);
-            
+
+            // lrk:判断当前节点是否对该tag负有责任
             if (distroMapper.responsible(distroTag)) {
                 filterChain.doFilter(req, resp);
                 return;
@@ -115,7 +117,8 @@ public class DistroFilter implements Filter {
                         "receive invalid redirect request from peer " + req.getRemoteAddr());
                 return;
             }
-            
+
+            // lrk:获取转发的目标节点
             final String targetServer = distroMapper.mapSrv(distroTag);
             
             List<String> headerList = new ArrayList<>(16);

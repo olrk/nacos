@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:根据请求参数获取distroTag;
+floating note left: ip:port
+if (判断当前节点是否需要对该distroTag负责) then (是)
+floating note left: int index = servers.indexOf(localAddress);\nint lastIndex = servers.lastIndexOf(localAddress);\nif (lastIndex < 0 || index < 0) {\n    return true;\n }\n \nint target = Math.abs(responsibleTag.hashCode() % Integer.MAX_VALUE) % servers.size();\nreturn target >= index && target <= lastIndex;
+    :放行;
+else (否)
+    :计算得出转发的目标节点;
+floating note right: int index = Math.abs(responsibleTag.hashCode() % Integer.MAX_VALUE) % servers.size();\nreturn servers.get(index);
+    :通过HTTP请求转发到目标节点;
+endif
+
+stop
+
+@enduml

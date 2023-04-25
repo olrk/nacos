@@ -369,7 +369,7 @@ public class NamingHttpClientProxy extends AbstractNamingClientProxy {
         
         params.put(CommonParams.NAMESPACE_ID, getNamespaceId());
 
-        // lrk:?serverListManager.isDomain()
+        // lrk:isDomain()方法判断nacos是否为单机
         if (CollectionUtils.isEmpty(servers) && !serverListManager.isDomain()) {
             throw new NacosException(NacosException.INVALID_PARAM, "no server available");
         }

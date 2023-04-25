@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:根据节点数生成一个随机数currentIndex;
+floating note left: new Random().nextInt(serverList.size());
+
+repeat
+    :currentIndex自增1，再对节点数进行取余，得到下标index;
+    floating note left: currentIndex.incrementAndGet() % getServerList().size();
+    :获取节点;
+    floating note left: getServerList().get(index);
+    :连接节点;
+repeat while (是否连接节点失败) is (是)
+
+stop
+
+@enduml

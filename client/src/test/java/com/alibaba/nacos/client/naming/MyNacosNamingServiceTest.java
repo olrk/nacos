@@ -17,26 +17,31 @@ import java.util.Properties;
  */
 public class MyNacosNamingServiceTest {
     @Test
-    public void testMyRegisterInstance() throws NacosException {
+    public void testMyRegisterInstance() throws NacosException, InterruptedException {
         Properties prop = new Properties();
         // 这个其实是namespaceId
         prop.put(PropertyKeyConst.NAMESPACE, "test");
         // 连接集群
-//        prop.setProperty("serverAddr", "localhost:8848,localhost:8850,localhost:8852");
+        prop.setProperty("serverAddr", "localhost:8848,localhost:8850,localhost:8852");
         // 连接单机
-        prop.setProperty("serverAddr", "192.168.1.223");
+//        prop.setProperty("serverAddr", "192.168.1.223");
 
         // 通过反射实例化NacosNamingService
         NamingService namingService = NamingFactory.createNamingService(prop);
 
         // 重载方法，会填充默认集群“DEFAULT”、默认分组“DEFAULT_GROUP”
         namingService.registerInstance("test.register.service", "1.1.1.1", 10000);
+
+
+        Thread.sleep(1000 * 100);
     }
 
     @Test
     public void testRegisterNoEphemeralInstance() throws NacosException, InterruptedException {
         Properties prop = new Properties();
-        prop.setProperty("serverAddr", "192.168.1.223");
+//        prop.setProperty("serverAddr", "192.168.1.223");
+        prop.setProperty("serverAddr", "localhost:8848,localhost:8850,localhost:8852");
+
         prop.put(PropertyKeyConst.NAMESPACE, "test");
         NamingService namingService = NamingFactory.createNamingService(prop);
 

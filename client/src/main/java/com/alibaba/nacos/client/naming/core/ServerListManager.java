@@ -74,7 +74,8 @@ public class ServerListManager implements ServerListFactory, Closeable {
     private ScheduledExecutorService refreshServerListExecutor;
     
     private String endpoint;
-    
+
+    // lrk:单机地址
     private String nacosDomain;
     
     private long lastServerListRefreshTime = 0L;
@@ -87,6 +88,7 @@ public class ServerListManager implements ServerListFactory, Closeable {
         this.namespace = namespace;
         initServerAddr(properties);
         if (!serverList.isEmpty()) {
+            // lrk:currentIndex随机数用于取nacos节点
             currentIndex.set(new Random().nextInt(serverList.size()));
         }
         if (serverList.isEmpty() && StringUtils.isEmpty(endpoint)) {

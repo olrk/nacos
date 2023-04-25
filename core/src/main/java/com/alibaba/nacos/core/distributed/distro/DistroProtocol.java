@@ -41,6 +41,7 @@ import org.springframework.stereotype.Component;
  * @author xiweng.yy
  */
 @Component
+// lrk:很重要的一个类，Distro协议
 public class DistroProtocol {
     
     private final ServerMemberManager memberManager;

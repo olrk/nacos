@@ -375,6 +375,7 @@ public abstract class RpcClient implements Closeable {
                     .printIfInfoEnabled(LOGGER, "[{}] Success to connect to server [{}] on start up, connectionId = {}",
                             rpcClientConfig.name(), connectToServer.serverInfo.getAddress(),
                             connectToServer.getConnectionId());
+            // lrk:连接成功则给currentConnection赋值
             this.currentConnection = connectToServer;
             rpcClientStatus.set(RpcClientStatus.RUNNING);
             eventLinkedBlockingQueue.offer(new ConnectionEvent(ConnectionEvent.CONNECTED));
@@ -498,6 +499,7 @@ public abstract class RpcClient implements Closeable {
                 // 1.get a new server
                 ServerInfo serverInfo = null;
                 try {
+                    // lrk:获取nacos节点
                     serverInfo = recommendServer.get() == null ? nextRpcServer() : recommendServer.get();
                     // 2.create a new channel to new server
                     Connection connectionNew = connectToServer(serverInfo);
@@ -643,6 +645,7 @@ public abstract class RpcClient implements Closeable {
                     throw new NacosException(NacosException.CLIENT_DISCONNECT,
                             "Client not connected, current status:" + rpcClientStatus.get());
                 }
+                // lrk:请求Nacos节点
                 response = this.currentConnection.request(request, timeoutMills);
                 if (response == null) {
                     throw new NacosException(SERVER_ERROR, "Unknown Exception.");
@@ -883,7 +886,7 @@ public abstract class RpcClient implements Closeable {
         String serverAddress = getServerListFactory().genNextServer();
         return resolveServerInfo(serverAddress);
     }
-    
+
     protected ServerInfo currentRpcServer() {
         String serverAddress = getServerListFactory().getCurrentServer();
         return resolveServerInfo(serverAddress);

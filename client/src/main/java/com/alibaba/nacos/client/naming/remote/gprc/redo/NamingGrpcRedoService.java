@@ -64,6 +64,7 @@ public class NamingGrpcRedoService implements ConnectionEventListener {
     
     public NamingGrpcRedoService(NamingGrpcClientProxy clientProxy) {
         this.redoExecutor = new ScheduledThreadPoolExecutor(REDO_THREAD, new NameThreadFactory(REDO_THREAD_NAME));
+        // lrk:gRPC重试定时任务，假如客户端一开始选择的节点宕机了，后面重新连接新的节点后会重新注册
         this.redoExecutor.scheduleWithFixedDelay(new RedoScheduledTask(clientProxy, this), DEFAULT_REDO_DELAY,
                 DEFAULT_REDO_DELAY, TimeUnit.MILLISECONDS);
     }

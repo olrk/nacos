@@ -75,7 +75,9 @@ public class DistroMapper extends MemberChangeListener {
      * @param responsibleTag responsible tag, serviceName for v1 and ip:port for v2
      * @return true if input service is response, otherwise false
      */
+    // lrk:判断当前节点是否需要对该tag负责
     public boolean responsible(String responsibleTag) {
+        // lrk:?healthyList怎么更新的
         final List<String> servers = healthyList;
         
         if (!switchDomain.isDistroEnabled() || EnvUtil.getStandaloneMode()) {
