@@ -1,0 +1,18 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:InstanceRequestHandler处理实例注册请求;
+:EphemeralClientOperationServiceImpl进行注册实例;
+:ServiceManager获取Service单例，发布MetadataEvent.ServiceMetadataEvent事件;
+floating note left: ServiceManager是Service的容器，Service以单例形式存在
+:ClientManager获取当前Client实例;
+floating note left: Client、ClientManager额外详细说明
+:将Instance实例包装成InstancePublishInfo;
+:client将该新对象添加到服务注册表，发布ClientEvent.ClientChangedEvent事件;
+floating note left: 此时实例已经正式注册到当前Nacos节点
+:发布ClientOperationEvent.ClientRegisterServiceEvent和MetadataEvent.InstanceMetadataEvent事件;
+
+stop
+
+@enduml

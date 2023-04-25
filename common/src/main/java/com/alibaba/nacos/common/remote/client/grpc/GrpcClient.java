@@ -214,6 +214,7 @@ public abstract class GrpcClient extends RpcClient {
             }
             ServerCheckRequest serverCheckRequest = new ServerCheckRequest();
             Payload grpcRequest = GrpcUtils.convert(serverCheckRequest);
+            // lrk:gRPC请求类型是ServerCheckRequest，响应成功则有了connectionId
             ListenableFuture<Payload> responseFuture = requestBlockingStub.request(grpcRequest);
             Payload response = responseFuture.get(clientConfig.serverCheckTimeOut(), TimeUnit.MILLISECONDS);
             //receive connection unregister response here,not check response is success.
@@ -326,6 +327,7 @@ public abstract class GrpcClient extends RpcClient {
             RequestGrpc.RequestFutureStub newChannelStubTemp = createNewChannelStub(managedChannel);
             if (newChannelStubTemp != null) {
 
+                // lrk:检查Server端gRPC是否可用
                 Response response = serverCheck(serverInfo.getServerIp(), port, newChannelStubTemp);
                 if (response == null || !(response instanceof ServerCheckResponse)) {
                     shuntDownChannel(managedChannel);

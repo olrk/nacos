@@ -1,0 +1,21 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:实例化NamingService实现类，调用注册方法;
+:通过重载，最终生成Instance实例对象，集群默认为“DEFAULT”、分组默认为“DEFAULT_GROUP”、权重默认为1.0;
+:NamingClientProxyDelegate实例对象进行注册（委派模式）;
+
+if (是否是临时实例) then (是)
+    :使用grpcClientProxy来注册;
+    :将实例缓存进ConcurrentMap，key是“groupName@@serviceName”;
+    :发起gRPC注册请求;
+    :根据注册结果修改缓存的实例状态，注册成功则将registered变量置为true;
+else (不是)
+    :使用httpClientProxy来注册;
+    :请求/v1/ns/instance进行注册;
+endif
+
+stop
+
+@enduml

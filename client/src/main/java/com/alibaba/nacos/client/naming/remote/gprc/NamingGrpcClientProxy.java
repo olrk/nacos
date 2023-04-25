@@ -208,7 +208,7 @@ public class NamingGrpcClientProxy extends AbstractNamingClientProxy {
     public void doRegisterService(String serviceName, String groupName, Instance instance) throws NacosException {
         InstanceRequest request = new InstanceRequest(namespaceId, serviceName, groupName,
                 NamingRemoteConstants.REGISTER_INSTANCE, instance);
-        // grpc请求Server注册实例
+        // lrk:gRPC请求Server注册实例
         requestToServer(request, Response.class);
         redoService.instanceRegistered(serviceName, groupName);
     }
