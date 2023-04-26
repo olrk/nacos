@@ -1,13 +1,17 @@
 @startuml
 'https://plantuml.com/activity-diagram-beta
 
+|发起节点|
 start
 :DistroClientDataProcessor监听ClientEvent.ClientChangedEvent事件;
-:构造DistroKey，resourceKey为clientId，resourceType为“Nacos:Naming:v2:ClientData”;
-:遍历节点列表，为每个节点构造动作为“CHANGE”的DistroDelayTask;
-:进一步将的DistroDelayTask转换成DistroSyncChangeTask;
+:构造Distro数据包，设置action为“CHANGE”;
+:遍历节点列表，向每个节点异步发送Distro数据包;
+|发起节点|
 
-
+|#AntiqueWhite|接收节点|
+:DistroDataRequestHandler接收Distro相关请求;
+:解析Distro数据包，更新节点的注册表数据;
+|接收节点|
 
 stop
 
