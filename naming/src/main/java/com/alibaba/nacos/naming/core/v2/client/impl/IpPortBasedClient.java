@@ -131,6 +131,7 @@ public class IpPortBasedClient extends AbstractClient {
      * Init client.
      */
     public void init() {
+        // lrk:心跳检测
         if (ephemeral) {
             beatCheckTask = new ClientBeatCheckTaskV2(this);
             HealthCheckReactor.scheduleCheck(beatCheckTask);

@@ -53,4 +53,30 @@ public class MyNacosNamingServiceTest {
         namingService.registerInstance("test.register.no.ephemeral.service", instance);
         Thread.sleep(1000 * 5);
     }
+
+    @Test
+    public void testGetAllInstances() throws NacosException {
+        Properties prop = new Properties();
+        prop.setProperty("serverAddr", "localhost:8848,localhost:8850,localhost:8852");
+
+        prop.put(PropertyKeyConst.NAMESPACE, "test");
+        NamingService namingService = NamingFactory.createNamingService(prop);
+
+        namingService.getAllInstances("test.register.no.ephemeral.service");
+    }
+
+    @Test
+    public void testSubscribe() throws NacosException, InterruptedException {
+        Properties prop = new Properties();
+        prop.setProperty("serverAddr", "localhost:8848,localhost:8850,localhost:8852");
+
+        prop.put(PropertyKeyConst.NAMESPACE, "test");
+        NamingService namingService = NamingFactory.createNamingService(prop);
+
+        namingService.getAllInstances("test.register.no.ephemeral.service");
+
+        namingService.subscribe("test.register.no.ephemeral.service", (event) -> {});
+
+        Thread.sleep(1000 * 1000);
+    }
 }

@@ -104,6 +104,7 @@ public class InstanceOperatorClientImpl implements InstanceOperator {
         
         boolean ephemeral = instance.isEphemeral();
         String clientId = IpPortBasedClient.getClientId(instance.toInetAddr(), ephemeral);
+        // lrk:里面有心跳检测逻辑
         createIpPortClientIfAbsent(clientId);
         Service service = getService(namespaceId, serviceName, ephemeral);
         // lrk:important，http方式注册服务实例

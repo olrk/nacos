@@ -168,16 +168,18 @@ public class NamingClientProxyDelegate implements NamingClientProxy {
     @Override
     public ServiceInfo subscribe(String serviceName, String groupName, String clusters) throws NacosException {
         NAMING_LOGGER.info("[SUBSCRIBE-SERVICE] service:{}, group:{}, clusters:{} ", serviceName, groupName, clusters);
+        // lrk:格式为“groupName@@serviceName”
         String serviceNameWithGroup = NamingUtils.getGroupedName(serviceName, groupName);
+        // lrk:clusterName不为空的话再拼接上“@@clusterName”
         String serviceKey = ServiceInfo.getKey(serviceNameWithGroup, clusters);
-        // lrk:定时同步服务端的实例信息，并进行本地缓存更新等操作
+        // lrk:服务更新定时任务，默认不开启，本意为在不开启服务订阅的情况下也能实时获取最新实例
         serviceInfoUpdateService.scheduleUpdateIfAbsent(serviceName, groupName, clusters);
         ServiceInfo result = serviceInfoHolder.getServiceInfoMap().get(serviceKey);
         if (null == result || !isSubscribed(serviceName, groupName, clusters)) {
-            // lrk:如果本地缓存不存在，则使用grpc进行订阅
+            // lrk:本地不存在或者没订阅，使用gRPC进行订阅
             result = grpcClientProxy.subscribe(serviceName, groupName, clusters);
         }
-        // lrk:本地缓存处理，上面的定时任务也执行了该方法
+        // lrk:更新服务，本地缓存
         serviceInfoHolder.processServiceInfo(result);
         return result;
     }

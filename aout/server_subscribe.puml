@@ -1,0 +1,15 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:ClientServiceIndexesManager监听事件;
+:节点添加当前客户端到发布者映射;
+:发出ServiceEvent.ServiceChangedEvent事件;
+:NamingSubscriberServiceV2Impl监听事件;
+:添加PushDelayTask任务;
+:PushDelayTaskProcessor处理PushDelayTask任务，执行PushExecuteTask任务;
+:PushExecuteTask运行run()方法，往该服务的订阅者推送数据;
+
+stop
+
+@enduml

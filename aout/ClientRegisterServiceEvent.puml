@@ -1,0 +1,19 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:构造订阅者;
+:查询客户端需要的服务信息;
+if (是订阅请求?) is (yes) then
+  :进行订阅;
+  note left: EphemeralClientOperationServiceImpl
+  :获取该gRPC长连接的Client实例，添加订阅者;
+  :发布ClientOperationEvent.ClientSubscribeServiceEvent事件;
+else (no)
+  :取消订阅;
+endif
+:返回服务信息;
+
+stop
+
+@enduml

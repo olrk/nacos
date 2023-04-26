@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+if (是订阅模式?) is (是) then
+  if (是首次获取或者没有订阅服务?) is (是) then
+    :进行服务订阅;
+    if (客户端服务信息持有者不持有该服务或没有订阅该服务?) is (是) then
+      :gRPC方式向服务端发起订阅请求;
+      floating note left: ServiceInfoHolder\nNamingGrpcClientProxy
+      :从服务端的响应中得到服务信息;
+    endif
+    :服务信息持有者解析服务信息，有变更就进行更新，同时写入磁盘文件作为缓存;
+    :返回服务信息;
+  endif
+else (不是)
+  :gRPC方式向服务端发起查询实例请求;
+endif
+:返回实例列表;
+
+stop
+
+@enduml

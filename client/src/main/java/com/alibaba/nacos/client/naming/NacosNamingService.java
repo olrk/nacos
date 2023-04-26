@@ -244,7 +244,7 @@ public class NacosNamingService implements NamingService {
         if (subscribe) {
             serviceInfo = serviceInfoHolder.getServiceInfo(serviceName, groupName, clusterString);
             if (null == serviceInfo || !clientProxy.isSubscribed(serviceName, groupName, clusterString)) {
-                // lrk:订阅模式
+                // lrk:首次获取或没订阅会直接进行订阅
                 serviceInfo = clientProxy.subscribe(serviceName, groupName, clusterString);
             }
         } else {

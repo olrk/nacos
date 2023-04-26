@@ -228,6 +228,7 @@ public class NamingMetadataManager extends SmartSubscriber {
         if (event instanceof MetadataEvent.InstanceMetadataEvent) {
             handleInstanceMetadataEvent((MetadataEvent.InstanceMetadataEvent) event);
         } else if (event instanceof MetadataEvent.ServiceMetadataEvent) {
+            // lrk:监听处理MetadataEvent.ServiceMetadataEvent事件
             handleServiceMetadataEvent((MetadataEvent.ServiceMetadataEvent) event);
         } else {
             handleClientDisconnectEvent((ClientEvent.ClientDisconnectEvent) event);

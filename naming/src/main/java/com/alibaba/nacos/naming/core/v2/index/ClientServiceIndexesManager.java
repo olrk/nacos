@@ -46,10 +46,10 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class ClientServiceIndexesManager extends SmartSubscriber {
 
-    // lrk:Service -> 发布者客户端clientId集合
+    // lrk:服务与发布者clientId的映射
     private final ConcurrentMap<Service, Set<String>> publisherIndexes = new ConcurrentHashMap<>();
-    
-    private final ConcurrentMap<Service, Set<String>> subscriberIndexes = new ConcurrentHashMap<>(); // service -> 订阅者
+    // lrk:服务与订阅者clientId的映射
+    private final ConcurrentMap<Service, Set<String>> subscriberIndexes = new ConcurrentHashMap<>();
     
     public ClientServiceIndexesManager() {
         NotifyCenter.registerSubscriber(this, NamingEventPublisherFactory.getInstance());
@@ -130,11 +130,10 @@ public class ClientServiceIndexesManager extends SmartSubscriber {
     }
     
     private void addPublisherIndexes(Service service, String clientId) {
-        // lrk:维护Service与实例客户端集合的映射
+        // lrk:维护服务与发布者的映射关系
         publisherIndexes.computeIfAbsent(service, key -> new ConcurrentHashSet<>());
         publisherIndexes.get(service).add(clientId);
-        // lrk:服务注册表变更事件，ServiceChangedEvent由NamingSubscriberServiceV2Impl监听
-        // lrk:主要做两件事，1：通知订阅客户端，2：Nacos集群数据同步
+        // lrk:该事件主要是推送服务信息到其订阅者
         NotifyCenter.publishEvent(new ServiceEvent.ServiceChangedEvent(service, true));
     }
     
